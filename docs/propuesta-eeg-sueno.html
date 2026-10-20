@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es" xml:lang="es">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Pronóstico de la dinámica del sueño con series de tiempo EEG (Sleep-EDF)</title>
+  <meta name="description" content="Pronóstico de la dinámica del sueño con series de tiempo EEG (Sleep-EDF)" />
+  <meta name="generator" content="bookdown 0.48 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Pronóstico de la dinámica del sueño con series de tiempo EEG (Sleep-EDF)" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Pronóstico de la dinámica del sueño con series de tiempo EEG (Sleep-EDF)" />
+  
+  
+  
+
+<meta name="author" content="Joel Angel Gonzales Flores" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Pronóstico de la dinámica del sueño con series de tiempo EEG (Sleep-EDF)</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Pronóstico de la dinámica del sueño con series de tiempo EEG (Sleep-EDF)</h1>
+<p class="author"><em>Joel Angel Gonzales Flores</em></p>
+<p class="date"><em>19 de octubre de 2026</em></p>
+</div>
+<p><img src="images/logo_javeriana.png" alt="" width="230px" style="display: block; margin: auto;" /></p>
+<p><em>Propuesta del curso Series Temporales — Maestría en Ciencia de Datos. Facultad de Ingeniería y Ciencias, Pontificia Universidad Javeriana Cali.</em></p>
+<p><strong>1. INFORMACIÓN A TRABAJAR.</strong> Registros polisomnográficos de la base pública
+<strong>Sleep-EDF Database Expanded</strong> (PhysioNet): 197 noches completas con EEG (Fpz-Cz y
+Pz-Oz, 100 Hz), EOG y EMG, con hipnograma marcado por técnicos expertos en épocas de
+30 s. Se usará el estudio <em>Sleep Cassette</em> (153 registros de adultos sanos de 25 a 101
+años). Cada noche se convierte en una serie de tiempo: la <strong>potencia relativa de la
+banda delta (0.5–4 Hz)</strong> del EEG Fpz-Cz por época de 30 s; p. ej., el sujeto SC4001
+aporta <strong>841 observaciones (7 h)</strong>.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:serie"></span>
+<img src="propuesta-eeg-sueno_files/figure-html/serie-1.png" alt="Sujeto SC4001: potencia delta relativa por época de 30 s (arriba) e hipnograma (abajo)." width="100%" />
+<p class="caption">
+Figura 1: Sujeto SC4001: potencia delta relativa por época de 30 s (arriba) e hipnograma (abajo).
+</p>
+</div>
+<p><strong>2. JUSTIFICACIÓN E IMPORTANCIA DEL PRONÓSTICO.</strong> La actividad delta refleja el
+<strong>sueño profundo (N3)</strong>, clave para la memoria, la recuperación física y la salud
+metabólica. La serie tiene la estructura que estudia el curso: <strong>ciclos de sueño de
+80–100 min</strong> que actúan como estacionalidad (la ACF repunta cerca del rezago 166,
+aprox. 83 min), <strong>tendencia decreciente</strong> durante la noche y fuerte <strong>autocorrelación</strong>
+entre épocas. Pronosticarla agrega valor en tres frentes: <strong>(i) diagnóstico más
+eficiente</strong>, pues un técnico clasifica a mano cerca de 1 000 épocas por noche y
+anticipar la dinámica del sueño apoya la clasificación automática; <strong>(ii)
+intervenciones en tiempo real</strong>, como la estimulación auditiva en lazo cerrado, que
+necesita predecir cuándo comenzará el sueño profundo para reforzarlo; y <strong>(iii)
+monitoreo en casa</strong> con EEG portátil, que requiere modelos ligeros (ETS, SARIMA) para
+pronosticar el estado de sueño y detectar noches anómalas.</p>
+<p><strong>3. FUENTES Y PERMISOS DE USO.</strong> No se usan datos de una empresa privada ni de
+pacientes propios; la base es pública y anonimizada. <strong>Sleep-EDF Database Expanded
+v1.0.0</strong> — PhysioNet, <a href="doi:10.13026/C2X676" class="uri">doi:10.13026/C2X676</a>, bajo <em>licencia Open Data Commons
+Attribution v1.0 (ODC-By)</em>: acceso abierto y uso libre, incluso comercial, con la
+obligación de citar la fuente. En el repositorio solo se publican las series derivadas.</p>
+<p><strong>REFERENCIAS.</strong> Kemp, B., Zwinderman, A. H., Tuk, B., Kamphuisen, H. A. C. y Oberyé,
+J. J. L. (2000). Analysis of a sleep-dependent neuronal feedback loop: the slow-wave
+microcontinuity of the EEG. <em>IEEE Trans. Biomed. Eng.</em>, 47(9), 1185–1194. Pollard, T.
+et al. (2026). PhysioNet as a global platform for biomedical research. <em>Nature Health</em>.
+<a href="doi:10.1038/s44360-026-00096-z" class="uri">doi:10.1038/s44360-026-00096-z</a>.</p>
+
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": false,
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["propuesta-eeg-sueno.pdf"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "section"
+  }
+});
+});
+</script>
+
+</body>
+
+</html>

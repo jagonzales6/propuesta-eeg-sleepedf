@@ -1,0 +1,13 @@
+bookdown::gitbook:
+  split_by: none
+  config:
+    toc:
+      collapse: section
+    download: ["pdf"]
+    sharing: no
+bookdown::pdf_document2:
+  toc: false
+  number_sections: false
+  latex_engine: xelatex
+  includes:
+    in_header: preamble.tex

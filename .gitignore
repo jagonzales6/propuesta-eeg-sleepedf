@@ -1,0 +1,10 @@
+.Rproj.user
+.Rhistory
+.RData
+_bookdown_files
+*.log
+*.tex
+data/raw/
+data/raw_s3/
+/*_files/
+/propuesta-eeg-sueno.pdf
